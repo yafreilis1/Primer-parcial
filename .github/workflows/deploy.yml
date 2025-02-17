@@ -1,36 +1,25 @@
-name: Deploy to Surge
+name: Publicar Pagina a Surge.sh
 
 on:
   push:
     branches:
-      - main # o la rama que prefieras, por ejemplo 'master'
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-    # Paso 1: Configurar el repositorio
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Clona el repositorio
+        uses: actions/checkout@v3
 
-    # Paso 2: Configurar Node.js (para usar Surge)
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '16'  # o la versión que prefieras
+      - name: configura nodejs  
+        uses: actions/setup-node@v3
+        with:
+            node-version: '18' 
 
-    # Paso 3: Instalar Surge
-    - name: Install Surge
-      run: npm install -g surge
+      - name: Instala Surge       
+        run: npm install --global surge
 
-    # Paso 4: Surge login usando un token secreto
-    - name: Surge login
-      env:
-        SURGE_LOGIN: ${{ secrets.SURGE_EMAIL }}
-        SURGE_TOKEN: ${{ secrets.SURGE_TOKEN }}
-      run: surge login --email $SURGE_LOGIN --token $SURGE_TOKEN
-
-    # Paso 5: Desplegar el sitio
-    - name: Deploy to Surge
-      run: surge --project ./ --domain your-domain.surge.sh # Si no quieres dominio personalizado, usa 'surge.sh' como URL
+      - name: Publicar pagina
+        run: surge --project ./ --domain ${{ secrets.SURGE_DOMAIN }} --token ${{ secrets.SURGE_API_KEY }}
